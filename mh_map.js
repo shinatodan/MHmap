@@ -1,19 +1,31 @@
+// 地図の初期化
+let map = L.map('map').setView([37.9, 139.06], 13); // 新潟近辺
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+let markers = [];
+let mhData = [];
+
+// CSV読み込み
 Papa.parse("https://shinatodan.github.io/MHmap/mh_data.csv", {
   download: true,
   header: true,
   complete: function(results) {
     mhData = results.data;
-    populateFilters(); // 初期フィルタセット
+    populateFilters(); // 初期フィルタ構築
     updateMap();
   }
 });
 
+// 分岐列（分岐00〜05）をまとめて扱う関数
 function getBranches(row) {
   return ["分岐00", "分岐01", "分岐02", "分岐03", "分岐04", "分岐05"]
     .map(k => row[k])
     .filter(v => v && v.trim() !== "");
 }
 
+// フィルターメニューの初期化
 function populateFilters() {
   const stationSet = new Set();
   mhData.forEach(item => stationSet.add(item["収容局"]));
@@ -38,6 +50,7 @@ function populateFilters() {
   updateBranchFilter();
 }
 
+// ケーブル名フィルターを収容局に応じて再構成
 function updateCableFilter() {
   const selectedStation = document.getElementById('stationFilter').value;
   const cableSet = new Set();
@@ -52,6 +65,7 @@ function updateCableFilter() {
   cableSelect.innerHTML = `<option value="">すべて</option>` + [...cableSet].map(c => `<option>${c}</option>`).join('');
 }
 
+// 分岐フィルターを収容局＋ケーブル名に応じて再構成
 function updateBranchFilter() {
   const selectedStation = document.getElementById('stationFilter').value;
   const selectedCable = document.getElementById('cableFilter').value;
@@ -69,7 +83,9 @@ function updateBranchFilter() {
   branchSelect.innerHTML = `<option value="">すべて</option>` + [...branchSet].map(b => `<option>${b}</option>`).join('');
 }
 
+// 地図の更新（フィルターに合うピンのみ表示）
 function updateMap() {
+  // 既存マーカーをクリア
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 
