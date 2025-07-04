@@ -18,14 +18,14 @@ Papa.parse("https://shinatodan.github.io/MHmap/mh_data.csv", {
   }
 });
 
-// 分岐列（分岐00〜05）をまとめて扱う関数
+// 分岐列をまとめて取得
 function getBranches(row) {
   return ["分岐00", "分岐01", "分岐02", "分岐03", "分岐04", "分岐05"]
     .map(k => row[k])
     .filter(v => v && v.trim() !== "");
 }
 
-// フィルターメニューの初期化
+// フィルター初期化
 function populateFilters() {
   const stationSet = new Set();
   mhData.forEach(item => stationSet.add(item["収容局"]));
@@ -50,7 +50,7 @@ function populateFilters() {
   updateBranchFilter();
 }
 
-// ケーブル名フィルターを収容局に応じて再構成
+// ケーブル名フィルターを更新
 function updateCableFilter() {
   const selectedStation = document.getElementById('stationFilter').value;
   const cableSet = new Set();
@@ -65,7 +65,7 @@ function updateCableFilter() {
   cableSelect.innerHTML = `<option value="">すべて</option>` + [...cableSet].map(c => `<option>${c}</option>`).join('');
 }
 
-// 分岐フィルターを収容局＋ケーブル名に応じて再構成
+// 分岐フィルターを更新
 function updateBranchFilter() {
   const selectedStation = document.getElementById('stationFilter').value;
   const selectedCable = document.getElementById('cableFilter').value;
@@ -83,9 +83,8 @@ function updateBranchFilter() {
   branchSelect.innerHTML = `<option value="">すべて</option>` + [...branchSet].map(b => `<option>${b}</option>`).join('');
 }
 
-// 地図の更新（フィルターに合うピンのみ表示）
+// 地図上の表示を更新
 function updateMap() {
-  // 既存マーカーをクリア
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 
