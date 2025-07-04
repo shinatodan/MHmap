@@ -14,7 +14,7 @@ Papa.parse("https://shinatodan.github.io/MHmap/mh_data.csv", {
   complete: function(results) {
     mhData = results.data;
     populateFilters(); // 初期フィルタ構築
-    updateMap();
+    //updateMap();
   }
 });
 
