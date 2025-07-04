@@ -1,5 +1,5 @@
-// 地図の初期化
-let map = L.map('map').setView([37.9, 139.06], 13); // 新潟近辺
+let map = L.map('map').setView([37.9, 139.06], 13); // 初期中心座標（新潟エリア）
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
@@ -7,95 +7,45 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let markers = [];
 let mhData = [];
 
-// CSV読み込み
 Papa.parse("https://shinatodan.github.io/MHmap/mh_data.csv", {
   download: true,
   header: true,
   complete: function(results) {
     mhData = results.data;
-    populateFilters(); // 初期フィルタ構築
+    populateFilters();
     updateMap();
   }
 });
 
-// 分岐列をまとめて取得
-function getBranches(row) {
-  return ["分岐00", "分岐01", "分岐02", "分岐03", "分岐04", "分岐05"]
-    .map(k => row[k])
-    .filter(v => v && v.trim() !== "");
-}
-
-// フィルター初期化
 function populateFilters() {
   const stationSet = new Set();
-  mhData.forEach(item => stationSet.add(item["収容局"]));
-
-  const stationSelect = document.getElementById('stationFilter');
-  stationSelect.innerHTML = `<option value="">すべて</option>` + [...stationSet].map(s => `<option>${s}</option>`).join('');
-
-  stationSelect.addEventListener('change', () => {
-    updateCableFilter();
-    updateBranchFilter();
-    updateMap();
-  });
-
-  document.getElementById('cableFilter').addEventListener('change', () => {
-    updateBranchFilter();
-    updateMap();
-  });
-
-  document.getElementById('branchFilter').addEventListener('change', updateMap);
-
-  updateCableFilter();
-  updateBranchFilter();
-}
-
-// ケーブル名フィルターを更新
-function updateCableFilter() {
-  const selectedStation = document.getElementById('stationFilter').value;
   const cableSet = new Set();
 
-  mhData.forEach(row => {
-    if (!selectedStation || row["収容局"] === selectedStation) {
-      cableSet.add(row["ケーブル名"]);
-    }
+  mhData.forEach(item => {
+    stationSet.add(item["収容局"]);
+    cableSet.add(item["ケーブル名"]);
   });
 
+  const stationSelect = document.getElementById('stationFilter');
   const cableSelect = document.getElementById('cableFilter');
+
+  stationSelect.innerHTML = `<option value="">すべて</option>` + [...stationSet].map(s => `<option>${s}</option>`).join('');
   cableSelect.innerHTML = `<option value="">すべて</option>` + [...cableSet].map(c => `<option>${c}</option>`).join('');
+
+  stationSelect.addEventListener('change', updateMap);
+  cableSelect.addEventListener('change', updateMap);
 }
 
-// 分岐フィルターを更新
-function updateBranchFilter() {
-  const selectedStation = document.getElementById('stationFilter').value;
-  const selectedCable = document.getElementById('cableFilter').value;
-  const branchSet = new Set();
-
-  mhData.forEach(row => {
-    const matchStation = !selectedStation || row["収容局"] === selectedStation;
-    const matchCable = !selectedCable || row["ケーブル名"] === selectedCable;
-    if (matchStation && matchCable) {
-      getBranches(row).forEach(b => branchSet.add(b));
-    }
-  });
-
-  const branchSelect = document.getElementById('branchFilter');
-  branchSelect.innerHTML = `<option value="">すべて</option>` + [...branchSet].map(b => `<option>${b}</option>`).join('');
-}
-
-// 地図上の表示を更新
 function updateMap() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
 
   const selectedStation = document.getElementById('stationFilter').value;
   const selectedCable = document.getElementById('cableFilter').value;
-  const selectedBranch = document.getElementById('branchFilter').value;
 
   const filtered = mhData.filter(row =>
     (!selectedStation || row["収容局"] === selectedStation) &&
-    (!selectedCable || row["ケーブル名"] === selectedCable) &&
-    (!selectedBranch || getBranches(row).includes(selectedBranch))
+    (!selectedCable || row["ケーブル名"] === selectedCable)
   );
 
   filtered.forEach(row => {
