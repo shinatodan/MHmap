@@ -18,11 +18,10 @@ Papa.parse("https://shinatodan.github.io/MHmap/mh_data.csv", {
   }
 });
 
-// 分岐列をまとめて取得
-function getBranches(row) {
+// 有効な分岐列を取得（"1"の列のみ）
+function getAvailableBranches(row) {
   return ["分岐00", "分岐01", "分岐02", "分岐03", "分岐04", "分岐05"]
-    .map(k => row[k])
-    .filter(v => v && v.trim() !== "");
+    .filter(k => row[k] === "1");
 }
 
 // フィルター初期化
@@ -65,17 +64,18 @@ function updateCableFilter() {
   cableSelect.innerHTML = `<option value="">すべて</option>` + [...cableSet].map(c => `<option>${c}</option>`).join('');
 }
 
-// 分岐フィルターを更新
+// 分岐フィルターを更新（"1" のみ対象）
 function updateBranchFilter() {
   const selectedStation = document.getElementById('stationFilter').value;
   const selectedCable = document.getElementById('cableFilter').value;
   const branchSet = new Set();
 
   mhData.forEach(row => {
-    const matchStation = !selectedStation || row["収容局"] === selectedStation;
-    const matchCable = !selectedCable || row["ケーブル名"] === selectedCable;
-    if (matchStation && matchCable) {
-      getBranches(row).forEach(b => branchSet.add(b));
+    if (
+      (!selectedStation || row["収容局"] === selectedStation) &&
+      (!selectedCable || row["ケーブル名"] === selectedCable)
+    ) {
+      getAvailableBranches(row).forEach(b => branchSet.add(b));
     }
   });
 
@@ -95,7 +95,7 @@ function updateMap() {
   const filtered = mhData.filter(row =>
     (!selectedStation || row["収容局"] === selectedStation) &&
     (!selectedCable || row["ケーブル名"] === selectedCable) &&
-    (!selectedBranch || getBranches(row).includes(selectedBranch))
+    (!selectedBranch || row[selectedBranch] === "1")
   );
 
   filtered.forEach(row => {
