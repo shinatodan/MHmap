@@ -109,11 +109,9 @@ function updateMap() {
           <div style="font-size:1.0em;">${row["収容局"]}</div>
           <div style="font-size:1.0em;">${row["ケーブル名"]}</div>
           <div style="margin-top:1.0px; font-size:1.0em;">
-            <div>Google map</div>
             <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank">地図アプリで開く</a>
           </div>
           <div style="margin-top:1.0px; font-size:1.0em;">
-            <div>ストリートビュー</div>
             <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}" target="_blank">ストリートビューを開く</a>
           </div>
         </div>`);
