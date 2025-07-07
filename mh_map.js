@@ -104,8 +104,22 @@ function updateMap() {
     if (!isNaN(lat) && !isNaN(lng)) {
       const marker = L.marker([lat, lng])
         .addTo(map)
-        .bindPopup(`<b>${row["収容局"]}</b><br>${row["ケーブル名"]}<br>${row["備考"]}`);
+        .bindPopup(`<div style="line-height:1.4">
+          <div style="font-weight:bold; font-size:1.2em;">${row["備考"]}</div>
+          <div style="font-size:0.8em;">${row["収容局"]}</div>
+          <div style="font-size:0.8em;">${row["ケーブル名"]}</div>
+          <div style="margin-top:8px; font-size:0.85em;">
+            <div><strong>Google mapリンク：</strong></div>
+            <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank">📍地図アプリで開く</a>
+          </div>
+          <div style="margin-top:5px; font-size:0.85em;">
+            <div><strong>Google Earthリンク：</strong></div>
+            <a href="https://earth.google.com/web/@${lat},${lng},100a,0d,35y,0h,0t,0r" target="_blank">🌍3Dビューで開く</a>
+          </div>
+        </div>`);
       markers.push(marker);
     }
   });
 }
+
+
