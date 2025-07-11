@@ -187,20 +187,18 @@ function addPressure() {
 function appendPressureItem(date, val) {
   const list = document.getElementById('pressureList');
   const div = document.createElement('div');
-  div.dataset.key = date;
+  div.dataset.date = date;
+  div.dataset.value = val;
   div.innerHTML = `
     ${date}: ${val}
     <button class="delete-pressure" data-date="${date}">削除</button>
   `;
-  list.appendChild(div);
-
-  // 削除ボタンにイベントリスナーを設定
-  div.querySelector('.delete-pressure').onclick = () => div.remove();
-  div.querySelector('.delete-failure').onclick = () => {
+  div.querySelector('.delete-pressure').onclick = () => {
     if (confirm("この項目を削除しますか？")) div.remove();
   };
-  
+  list.appendChild(div);
 }
+
 
 
 function addFailure() {
@@ -213,42 +211,40 @@ function addFailure() {
 function appendFailureItem(date, status, comment) {
   const list = document.getElementById('failureList');
   const div = document.createElement('div');
-  div.dataset.key = date;
+  div.dataset.date = date;
+  div.dataset.status = status;
+  div.dataset.comment = comment;
   div.innerHTML = `
     ${date}: [${status}] ${comment}
     <button class="delete-failure" data-date="${date}">削除</button>
   `;
-  list.appendChild(div);
-
-  // 削除ボタンにイベントリスナーを設定
-  div.querySelector('.delete-failure').onclick = () => div.remove();
   div.querySelector('.delete-failure').onclick = () => {
     if (confirm("この項目を削除しますか？")) div.remove();
   };
-  
+  list.appendChild(div);
 }
+
 
 
 function saveMHDetail() {
   const size = document.getElementById('mhSize').value;
   const closure = document.getElementById('closureType').value;
 
-  const pressureList = document.getElementById('pressureList').children;
+  // 安全に保存するために data 属性から値を取得
   const pressure = {};
-  for (let item of pressureList) {
-    const [date, val] = item.textContent.split(':').map(s => s.trim());
-    pressure[date] = val;
+  for (let item of document.getElementById('pressureList').children) {
+    const date = item.dataset.date;
+    const val = item.dataset.value;
+    if (date && val) pressure[date] = val;
   }
 
-  const failureList = document.getElementById('failureList').children;
   const failures = {};
-  for (let item of failureList) {
-    const match = item.textContent.match(/^(\d{4}-\d{2}-\d{2}): \[(.*?)\] (.*)$/);
-    if (match) {
-      failures[match[1]] = {
-        status: match[2],
-        comment: match[3]
-      };
+  for (let item of document.getElementById('failureList').children) {
+    const date = item.dataset.date;
+    const status = item.dataset.status;
+    const comment = item.dataset.comment;
+    if (date && status != null) {
+      failures[date] = { status, comment };
     }
   }
 
@@ -257,8 +253,12 @@ function saveMHDetail() {
   }).then(() => {
     alert("保存しました");
     modal.style.display = 'none';
+  }).catch(err => {
+    console.error("保存失敗:", err);
+    alert("保存に失敗しました");
   });
 }
+
 
 
 
