@@ -146,7 +146,7 @@ function updateMap() {
 
 function openModal(mhName) {
   currentMHId = mhName;
-  document.getElementById('modalTitle').textContent = `${mhName} の詳細情報`;
+  document.getElementById('modalTitle').textContent = `${mhName} 　詳細情報`;
 
   // 初期化
   document.getElementById('mhSize').value = "";
