@@ -133,7 +133,7 @@ function updateMap() {
             <div style="font-weight:bold; font-size:1.2em;">${row["備考"]}</div>
             <div style="font-size:1.0em;">${row["収容局"]}</div>
             <div>
-              <a href="pdf/${row["pdfファイル名"]}" target="_blank">${row["ケーブル名"]}</a>
+              <a href="MHpdf/${row["pdfファイル名"]}" target="_blank">${row["ケーブル名"]}</a>
             </div>
             <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank">地図アプリで開く</a><br>
             <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}" target="_blank">ストリートビューで開く</a><br><br>
