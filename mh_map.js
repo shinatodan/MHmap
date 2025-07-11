@@ -153,6 +153,11 @@ function openModal(mhName) {
   document.getElementById('closureType').value = "";
   document.getElementById('pressureList').innerHTML = "";
   document.getElementById('failureList').innerHTML = "";
+  document.getElementById('pressureDate').value = "";
+  document.getElementById('pressureValue').value = "";
+  document.getElementById('failureDate').value = "";
+  document.getElementById('failureStatus').value = "";
+  document.getElementById('failureComment').value = "";
 
   // Firestoreから取得
   db.collection("mhDetails").doc(mhName).get().then(doc => {
