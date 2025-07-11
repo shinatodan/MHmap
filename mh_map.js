@@ -187,10 +187,21 @@ function addPressure() {
 function appendPressureItem(date, val) {
   const list = document.getElementById('pressureList');
   const div = document.createElement('div');
-  div.textContent = `${date}: ${val}`;
   div.dataset.key = date;
+  div.innerHTML = `
+    ${date}: ${val}
+    <button class="delete-pressure" data-date="${date}">削除</button>
+  `;
   list.appendChild(div);
+
+  // 削除ボタンにイベントリスナーを設定
+  div.querySelector('.delete-pressure').onclick = () => div.remove();
+  div.querySelector('.delete-failure').onclick = () => {
+    if (confirm("この項目を削除しますか？")) div.remove();
+  };
+  
 }
+
 
 function addFailure() {
   const date = document.getElementById('failureDate').value;
@@ -202,10 +213,21 @@ function addFailure() {
 function appendFailureItem(date, status, comment) {
   const list = document.getElementById('failureList');
   const div = document.createElement('div');
-  div.textContent = `${date}: [${status}] ${comment}`;
   div.dataset.key = date;
+  div.innerHTML = `
+    ${date}: [${status}] ${comment}
+    <button class="delete-failure" data-date="${date}">削除</button>
+  `;
   list.appendChild(div);
+
+  // 削除ボタンにイベントリスナーを設定
+  div.querySelector('.delete-failure').onclick = () => div.remove();
+  div.querySelector('.delete-failure').onclick = () => {
+    if (confirm("この項目を削除しますか？")) div.remove();
+  };
+  
 }
+
 
 function saveMHDetail() {
   const size = document.getElementById('mhSize').value;
