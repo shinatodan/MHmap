@@ -33,16 +33,6 @@
 </head>
 <body>
 
-  <div id="passwordPrompt" style="text-align:center; margin-top:100px;">
-    <h2>パスワードを入力してください</h2>
-    <input type="password" id="passwordInput" placeholder="パスワード">
-    <button onclick="checkPassword()">OK</button>
-    <div id="errorMessage" style="color:red; margin-top:10px;"></div>
-  </div>
-
-  <!-- 本体：パスワード通過後に表示 -->
-  <div id="mainContent" style="display:none;">
-
   <h1>MH位置マップ</h1>
   <div class="filters">
     <label>収容局：<select id="stationFilter"></select></label>
@@ -107,22 +97,5 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="mh_map.js"></script>
 
-  <script>
-    function checkPassword() {
-      const input = document.getElementById('passwordInput').value;
-      if (input === '0036') {
-        document.getElementById('passwordPrompt').style.display = 'none';
-        document.getElementById('mainContent').style.display = 'block';
-
-        setTimeout(() => {
-          if (typeof map !== 'undefined'){
-            map.invalidateSite();
-          }
-        }, 200)
-      } else {
-        document.getElementById('errorMessage').textContent = 'パスワードが違います';
-      }
-    }
-  </script>
 </body>
 </html>
