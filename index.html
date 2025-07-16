@@ -111,10 +111,14 @@
       if (input === '0036') {
         document.getElementById('passwordPrompt').style.display = 'none';
         document.getElementById('mainContent').style.display = 'block';
+        setTimeout(() => {
+          map.invalidateSize();
+        }, 200);
       } else {
         document.getElementById('errorMessage').textContent = 'パスワードが違います';
       }
     }
   </script>
+  
 </body>
 </html>
