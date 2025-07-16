@@ -29,73 +29,92 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
 </head>
+
 <body>
-
-  <h1>MH位置マップ</h1>
-  <div class="filters">
-    <label>収容局：<select id="stationFilter"></select></label>
-    <label>ケーブル名：<select id="cableFilter"></select></label>
-    <label>分岐：<select id="branchFilter"></select></label>
+  <!-- パスワード入力画面 -->
+  <div id="passwordPrompt" style="text-align:center; margin-top:100px;">
+    <h2>パスワードを入力してください</h2>
+    <input type="password" id="passwordInput" placeholder="パスワード">
+    <button onclick="checkPassword()">OK</button>
+    <div id="errorMessage" style="color:red; margin-top:10px;"></div>
   </div>
-  <div id="map"></div>
 
-  <!-- モーダル -->
-  <div id="mhModal" class="modal" style="display:none;">
-    <div class="modal-content">
-      <span id="closeModal" class="close">&times;</span>
-      <h2 id="modalTitle">MH詳細</h2>
+  <!-- 本体：パスワード通過後に表示 -->
+  <div id="mainContent" style="display:none;">
+    <h1>MH位置マップ</h1>
+    <div class="filters">
+      <label>収容局：<select id="stationFilter"></select></label>
+      <label>ケーブル名：<select id="cableFilter"></select></label>
+      <label>分岐：<select id="branchFilter"></select></label>
+    </div>
+    <div id="map"></div>
 
-      <label>MHサイズ：
-        <select id="mhSize">
+    <!-- モーダル -->
+    <div id="mhModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span id="closeModal" class="close">&times;</span>
+        <h2 id="modalTitle">MH詳細</h2>
+
+        <label>MHサイズ：
+          <select id="mhSize">
+            <option value="">未選択</option>
+            <option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+            <option value="5">5</option><option value="6">6</option>
+            <option value="7">7</option><option value="8">8</option>
+          </select>
+        </label><br>
+
+        <label>クロージャ種類：
+          <select id="closureType">
+            <option value="">未選択</option>
+            <option value="鉛管">鉛管</option>
+            <option value="4SC">4SC</option>
+            <option value="4SC L">SAT</option>
+            <option value="その他">その他</option>
+          </select>
+        </label><br>
+
+        <label>内圧:</label>
+        <div id="pressureList"></div>
+        <input type="date" id="pressureDate">
+        <input type="number" id="pressureValue" step="0.01" placeholder="圧力">
+        <button onclick="addPressure()">追加</button><br><br>
+
+        <label>故障歴:</label>
+        <div id="failureList"></div>
+        <input type="date" id="failureDate">
+        <select id="failureStatus">
           <option value="">未選択</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
+          <option value="故障中">故障中</option>
+          <option value="修理済み">修理済み</option>
+          <option value="提案中">TOSYS提案中</option>
         </select>
-      </label><br>
+        <input type="text" id="failureComment" placeholder="コメント">
+        <button onclick="addFailure()">追加</button><br><br>
 
-      <label>クロージャ種類：
-        <select id="closureType">
-          <option value="">未選択</option>
-          <option value="鉛管">鉛管</option>
-          <option value="4SC">4SC</option>
-          <option value="4SC L">SAT</option>
-          <option value="その他">その他</option>
-        </select>
-      </label><br>
-
-      <label>内圧:</label>
-      <div id="pressureList"></div>
-      <input type="date" id="pressureDate">
-      <input type="number" id="pressureValue" step="0.01" placeholder="圧力">
-      <button onclick="addPressure()">追加</button><br><br>
-
-      <label>故障歴:</label>
-      <div id="failureList"></div>
-      <input type="date" id="failureDate">
-      <select id="failureStatus">
-        <option value="">未選択</option>
-        <option value="故障中">故障中</option>
-        <option value="修理済み">修理済み</option>
-        <option value="提案中">TOSYS提案中</option>
-      </select>
-      <input type="text" id="failureComment" placeholder="コメント">
-      <button onclick="addFailure()">追加</button><br><br>
-
-      <button onclick="saveMHDetail()">保存</button>
+        <button onclick="saveMHDetail()">保存</button>
+      </div>
     </div>
   </div>
 
+  <!-- ライブラリ -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="mh_map.js"></script>
 
+  <!-- パスワード認証スクリプト -->
+  <script>
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value;
+      if (input === '0036') {
+        document.getElementById('passwordPrompt').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+      } else {
+        document.getElementById('errorMessage').textContent = 'パスワードが違います';
+      }
+    }
+  </script>
 </body>
 </html>
