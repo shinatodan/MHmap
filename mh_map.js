@@ -89,8 +89,6 @@ window.initApp = function initApp() {
       _mhData = (results.data || []).filter(row => Object.keys(row).length > 0);
 
       populateFilters();
-      // 初回から地図に表示
-      updateMap();
     },
     error: function (err) {
       console.error("CSV 読み込み失敗:", err);
