@@ -126,31 +126,43 @@ function updateMap() {
     const lat = parseFloat(row["緯度"]);
     const lng = parseFloat(row["経度"]);
     if (!isNaN(lat) && !isNaN(lng)) {
+      const mhName = row["備考"]; 
+
       db.collection("mhDetails").doc(mhName).get().then(doc => {
-      let hasFailure = false;
-      if (doc.exists) {
-        const data = doc.data();
-        hasFailure = data.failures && Object.keys(data.failures).length > 0;
-      }
-      const marker = L.marker([lat, lng])
-        .addTo(map)
-        .bindPopup(`
+        let hasFailure = false;
+        if (doc.exists) {
+          const data = doc.data();
+          hasFailure = data.failures && Object.keys(data.failures).length > 0;
+        }
+
+        const marker = L.marker([lat, lng], {
+          icon: L.icon({
+            iconUrl: hasFailure
+              ? 'https://maps.google.com/mapfiles/ms/icons/orange-dot.png'
+              : 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+          })
+        }).addTo(map).bindPopup(`
           <div style="line-height:1.4">
-            <div style="font-weight:bold; font-size:1.2em;">${row["備考"]}</div>
+            <div style="font-weight:bold; font-size:1.2em;">${mhName}</div>
             <div style="font-size:1.0em;">${row["収容局"]}</div>
             <div>
               <a href="MHpdf/${row["pdfファイル名"]}" target="_blank">${row["ケーブル名"]}</a>
             </div>
             <a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank">地図アプリで開く</a><br>
             <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}" target="_blank">ストリートビューで開く</a><br><br>
-            <button onclick="openModal('${row["備考"]}')">詳細</button>
+            <button onclick="openModal('${mhName}')">詳細</button>
           </div>
         `);
-        
-      markers.push(marker);
+
+        markers.push(marker);
+      });
     }
   });
 }
+
 
 function openModal(mhName) {
   currentMHId = mhName;
