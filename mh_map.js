@@ -126,6 +126,12 @@ function updateMap() {
     const lat = parseFloat(row["緯度"]);
     const lng = parseFloat(row["経度"]);
     if (!isNaN(lat) && !isNaN(lng)) {
+      db.collection("mhDetails").doc(mhName).get().then(doc => {
+      let hasFailure = false;
+      if (doc.exists) {
+        const data = doc.data();
+        hasFailure = data.failures && Object.keys(data.failures).length > 0;
+      }
       const marker = L.marker([lat, lng])
         .addTo(map)
         .bindPopup(`
